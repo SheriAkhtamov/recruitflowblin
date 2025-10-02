@@ -1,0 +1,29 @@
+export default function Documentation() {
+  const { t } = useTranslation();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
+  // Access control check
+  if (!user) {
+    return (
+      <div className="p-6 text-center">
+        <h2 className="text-xl font-semibold text-slate-900 mb-2">{t('accessDenied')}</h2>
+        <p className="text-slate-600">{t('pleaseLogin')}</p>
+      </div>
+    );
+  }
+  
+  // Check if user has permission to access documentation
+  const canAccess = user.role === 'admin' || user.role === 'hr_manager';
+  if (!canAccess) {
+    return (
+      <div className="p-6 text-center">
+        <h2 className="text-xl font-semibold text-slate-900 mb-2">{t('accessDenied')}</h2>
+        <p className="text-slate-600">{t('noPermissionToAccessThisSection')}</p>
+      </div>
+    );
+  }
+  
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
